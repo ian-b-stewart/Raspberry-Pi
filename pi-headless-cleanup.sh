@@ -28,14 +28,9 @@ for svc in "${SERVICES[@]}"; do
 done
 
 echo
-echo "== Ensuring rfkill is installed =="
-
-apt update -y
-apt install -y rfkill
-
-echo
 echo "== Blocking Wi-Fi and Bluetooth via rfkill =="
 
+# rfkill is assumed to already exist; just block radios
 rfkill block wifi || true
 rfkill block bluetooth || true
 
@@ -65,7 +60,7 @@ systemctl enable rfkill-block.service
 echo
 echo "== Removing desktop / GUI packages =="
 
-# Safe GUI packages to remove; avoid touching networking
+# Safe GUI packages to remove; avoids touching networking
 GUI_PACKAGES=(
   xserver-xorg-core
   xserver-xorg-video-*
@@ -115,25 +110,4 @@ echo "== Disabling Wi-Fi and Bluetooth at firmware level =="
 BOOTCFG="/boot/config.txt"
 
 grep -q "dtoverlay=disable-bt" "$BOOTCFG" || echo "dtoverlay=disable-bt" >> "$BOOTCFG"
-grep -q "dtoverlay=disable-wifi" "$BOOTCFG" || echo "dtoverlay=disable-wifi" >> "$BOOTCFG"
-
-echo
-echo "== Disabling onboard audio and reducing GPU memory =="
-
-grep -q "dtparam=audio=off" "$BOOTCFG" || echo "dtparam=audio=off" >> "$BOOTCFG"
-
-if grep -q "^gpu_mem=" "$BOOTCFG"; then
-  sed -i 's/^gpu_mem=.*/gpu_mem=16/' "$BOOTCFG"
-else
-  echo "gpu_mem=16" >> "$BOOTCFG"
-fi
-
-echo
-echo "== Cleaning system logs =="
-
-journalctl --vacuum-time=7d || true
-
-echo
-echo "=== Cleanup complete ==="
-echo "Reboot recommended to fully apply firmware and rfkill changes."
-echo "Networking on eth0 should remain functional."
+grep -q "dtoverlay=disable-wifi"
