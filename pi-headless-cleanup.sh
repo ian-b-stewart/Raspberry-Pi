@@ -65,22 +65,24 @@ systemctl enable rfkill-block.service
 echo
 echo "== Removing desktop / GUI packages =="
 
+# Safe GUI packages to remove; avoid touching networking
 GUI_PACKAGES=(
-  xserver-xorg*
-  x11-*
-  wayland*
-  weston*
-  lx*
-  openbox*
-  lightdm*
+  xserver-xorg-core
+  xserver-xorg-video-*
+  x11-common
+  x11-utils
+  x11-xserver-utils
+  lightdm
+  lxsession
+  lxpanel
+  lxappearance
+  lxterminal
+  openbox
+  lxde*
   gnome*
   kde*
   gtk*
   mesa-*
-  libegl*
-  libgl*
-  libx11*
-  libwayland*
 )
 
 apt purge -y "${GUI_PACKAGES[@]}" || true
@@ -134,3 +136,4 @@ journalctl --vacuum-time=7d || true
 echo
 echo "=== Cleanup complete ==="
 echo "Reboot recommended to fully apply firmware and rfkill changes."
+echo "Networking on eth0 should remain functional."
