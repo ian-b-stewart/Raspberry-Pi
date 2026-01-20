@@ -27,7 +27,7 @@ Raspberry-Pi/
 
 ## Projects
 
-### 🔒 [Backup](Backup/README.md)
+### [Backup](Backup/README.md)
 
 Secure, automated backup solution for Docker homelab deployments. Features:
 
@@ -39,9 +39,9 @@ Secure, automated backup solution for Docker homelab deployments. Features:
 - **Healthchecks.io integration** for monitoring
 - **Restore support** with automatic password fallback
 
-[📖 Full Documentation →](Backup/README.md)
+[Full Documentation](Backup/README.md)
 
-### 🖥️ [Pi-Headless-Cleanup](Pi-Headless-Cleanup/README.md)
+### [Pi-Headless-Cleanup](Pi-Headless-Cleanup/README.md)
 
 Optimize a Raspberry Pi for headless server operation:
 
@@ -50,7 +50,7 @@ Optimize a Raspberry Pi for headless server operation:
 - Disables unnecessary services
 - Reduces memory usage and attack surface
 
-[📖 Full Documentation →](Pi-Headless-Cleanup/README.md)
+[Full Documentation](Pi-Headless-Cleanup/README.md)
 
 ## Quick Start
 

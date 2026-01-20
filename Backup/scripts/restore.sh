@@ -94,15 +94,15 @@ log_info() {
 }
 
 log_success() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✅ SUCCESS: $1"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $1"
 }
 
 log_warn() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ⚠️  WARN: $1"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN: $1"
 }
 
 log_error() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ❌ ERROR: $1" >&2
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1" >&2
 }
 
 # -------------------------------
@@ -384,13 +384,13 @@ restore_backup() {
     
     # Show what's available
     if [[ -d "$RESTORE_TEMP_DIR/databases" ]]; then
-        echo "📦 Databases:"
+        echo "Databases:"
         ls -lh "$RESTORE_TEMP_DIR/databases/" 2>/dev/null | tail -n +2 || echo "  (none)"
         echo ""
     fi
     
     if [[ -d "$RESTORE_TEMP_DIR/stacks" ]]; then
-        echo "📁 Stack Data:"
+        echo "Stack Data:"
         for stack_dir in "$RESTORE_TEMP_DIR/stacks"/*/; do
             if [[ -d "$stack_dir" ]]; then
                 echo "  - $(basename "$stack_dir")"
@@ -400,7 +400,7 @@ restore_backup() {
     fi
     
     if [[ -d "$RESTORE_TEMP_DIR/decrypted" ]]; then
-        echo "🔐 Decrypted Secrets:"
+        echo "Decrypted Secrets:"
         find "$RESTORE_TEMP_DIR/decrypted" -type f -name "*.env" | while read -r f; do
             echo "  - ${f#$RESTORE_TEMP_DIR/decrypted/}"
         done

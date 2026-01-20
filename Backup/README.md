@@ -121,57 +121,57 @@ CRON
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `DOCKER_HOMELAB_PATH` | ✅ | `/opt/docker-homelab` | Path to docker-homelab repo |
-| `HOMELAB_SECRETS_PATH` | ✅ | `/opt/docker-homelab/secrets` | Secrets to encrypt |
-| `LOCAL_HOSTNAME` | ✅ | `raspberry-pi` | Identifier in backup filenames |
+| `DOCKER_HOMELAB_PATH` | Yes | `/opt/docker-homelab` | Path to docker-homelab repo |
+| `HOMELAB_SECRETS_PATH` | Yes | `/opt/docker-homelab/secrets` | Secrets to encrypt |
+| `LOCAL_HOSTNAME` | Yes | `raspberry-pi` | Identifier in backup filenames |
 
 #### Remote Server
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `BACKUP_REMOTE_USER` | ✅ | - | SSH username |
-| `BACKUP_REMOTE_HOST` | ✅ | - | Server hostname/IP |
-| `BACKUP_REMOTE_PATH` | ✅ | - | Remote directory path |
-| `BACKUP_REMOTE_PORT` | ❌ | `22` | SSH port |
+| `BACKUP_REMOTE_USER` | Yes | - | SSH username |
+| `BACKUP_REMOTE_HOST` | Yes | - | Server hostname/IP |
+| `BACKUP_REMOTE_PATH` | Yes | - | Remote directory path |
+| `BACKUP_REMOTE_PORT` | No | `22` | SSH port |
 
 #### SSH Authentication
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `SSH_KEY_PATH` | ✅ | `./secrets/id_backup_ed25519` | Path to SSH private key |
-| `SSH_KEY_PASSPHRASE` | ✅ | - | SSH key passphrase |
+| `SSH_KEY_PATH` | Yes | `./secrets/id_backup_ed25519` | Path to SSH private key |
+| `SSH_KEY_PASSPHRASE` | Yes | - | SSH key passphrase |
 
 #### Encryption
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `BACKUP_ENCRYPTION_PASSWORD` | ✅ | - | GPG encryption password |
-| `BACKUP_PASSWORD_VERSION` | ❌ | `1` | Tracks password rotations |
-| `BACKUP_PASSWORD_CREATED` | ❌ | - | Date of last rotation |
+| `BACKUP_ENCRYPTION_PASSWORD` | Yes | - | GPG encryption password |
+| `BACKUP_PASSWORD_VERSION` | No | `1` | Tracks password rotations |
+| `BACKUP_PASSWORD_CREATED` | No | - | Date of last rotation |
 
 #### Monitoring
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `HEALTHCHECK_BACKUP_URL` | ❌ | - | Healthchecks.io ping URL |
-| `HEALTHCHECK_ROTATION_URL` | ❌ | - | Rotation reminder URL |
+| `HEALTHCHECK_BACKUP_URL` | No | - | Healthchecks.io ping URL |
+| `HEALTHCHECK_ROTATION_URL` | No | - | Rotation reminder URL |
 
 #### Retention
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `BACKUP_RETENTION_DAILY` | ❌ | `7` | Daily backups to keep |
-| `BACKUP_RETENTION_WEEKLY` | ❌ | `4` | Weekly backups (Sundays) |
-| `BACKUP_RETENTION_MONTHLY` | ❌ | `3` | Monthly backups (1st) |
+| `BACKUP_RETENTION_DAILY` | No | `7` | Daily backups to keep |
+| `BACKUP_RETENTION_WEEKLY` | No | `4` | Weekly backups (Sundays) |
+| `BACKUP_RETENTION_MONTHLY` | No | `3` | Monthly backups (1st) |
 
 #### Stacks & Databases
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `BACKUP_STACKS` | ❌ | `smokeping,phpipam` | Stacks to backup |
-| `PHPIPAM_DB_CONTAINER` | ❌ | `phpipam-mariadb` | Database container name |
-| `PHPIPAM_DB_NAME` | ❌ | `phpipam` | Database name |
-| `PHPIPAM_DB_USER` | ❌ | `phpipam` | Database user |
+| `BACKUP_STACKS` | No | `smokeping,phpipam` | Stacks to backup |
+| `PHPIPAM_DB_CONTAINER` | No | `phpipam-mariadb` | Database container name |
+| `PHPIPAM_DB_NAME` | No | `phpipam` | Database name |
+| `PHPIPAM_DB_USER` | No | `phpipam` | Database user |
 
 ## Usage
 
@@ -238,9 +238,9 @@ This will:
 
 | Category | Contents | Encrypted |
 |----------|----------|-----------|
-| **Databases** | MariaDB/MySQL dumps from configured containers | ❌ |
-| **Stack Data** | Bind mount directories (config, data) | ❌ |
-| **Secrets** | All `.env` files from HOMELAB_SECRETS_PATH | ✅ AES-256 |
+| **Databases** | MariaDB/MySQL dumps from configured containers | No |
+| **Stack Data** | Bind mount directories (config, data) | No |
+| **Secrets** | All `.env` files from HOMELAB_SECRETS_PATH | Yes (AES-256) |
 
 ### Backup Archive Structure
 

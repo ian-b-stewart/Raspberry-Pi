@@ -63,15 +63,15 @@ log_info() {
 }
 
 log_success() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✅ SUCCESS: $1"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] SUCCESS: $1"
 }
 
 log_warn() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ⚠️  WARN: $1"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN: $1"
 }
 
 log_error() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ❌ ERROR: $1" >&2
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1" >&2
 }
 
 # -------------------------------
