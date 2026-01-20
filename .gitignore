@@ -1,0 +1,26 @@
+# Secrets directory - contains passwords, keys, and sensitive configuration
+Backup/secrets/
+
+# Environment files with real values (keep .example templates)
+*.env
+!*.env.example
+
+# SSH keys
+id_*
+*.key
+*.pem
+
+# GPG files
+*.gpg
+
+# Backup archives (if created locally)
+*.tar.gz
+*.tar
+
+# Editor and OS files
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+*.bak

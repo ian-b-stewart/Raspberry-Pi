@@ -1,81 +1,103 @@
-# Raspberry Pi Headless Cleanup Script
+# Raspberry Pi Homelab Utilities
 
-A hardened cleanup script for **Raspberry Pi 4** systems running **Raspberry Pi OS (Debian-based)** that are intended to operate as **Ethernet-only, headless servers**.
+A collection of scripts and tools for managing Raspberry Pi servers in a homelab environment.
 
-This script removes desktop and GUI packages, disables unnecessary services, and fully disables Wi-Fi and Bluetooth at **three layers**: services, firmware, and rfkill.
+## Repository Structure
 
----
+```
+Raspberry-Pi/
+├── README.md               # This file
+├── LICENSE                 # MIT License
+├── .gitignore              # Excludes secrets and sensitive files
+│
+├── Backup/                 # Docker backup solution
+│   ├── README.md           # Comprehensive backup documentation
+│   ├── backup.env.example  # Configuration template
+│   ├── secrets/            # (gitignored) Keys, passwords, env files
+│   └── scripts/
+│       ├── backup.sh       # Run daily backups
+│       ├── restore.sh      # List and restore backups
+│       ├── rotate-password.sh  # Quarterly password rotation
+│       └── setup.sh        # Initial setup wizard
+│
+└── Pi-Headless-Cleanup/    # Headless server optimization
+    ├── README.md           # Script documentation
+    └── pi-headless-cleanup.sh  # Remove GUI, disable radios
+```
 
-## Features
+## Projects
 
-- Removes **X11, Wayland, LightDM, LXDE, GTK, Mesa, and related GUI packages**
-- Disables **Wi-Fi and Bluetooth** via:
-  - systemd services
-  - firmware overlays
-  - persistent `rfkill` blocks
-- Removes Raspberry Pi desktop extras and games
-- Reduces GPU memory to **16 MB**
-- Disables onboard audio
-- Cleans unused packages and system logs
-- Safe to run multiple times (idempotent)
+### 🔒 [Backup](Backup/README.md)
 
-Designed for:
-- Docker hosts
-- Infrastructure services (DNS, VPN, reverse proxy)
-- Homelabs and edge servers
-- Security-hardened Raspberry Pi deployments
+Secure, automated backup solution for Docker homelab deployments. Features:
 
----
+- **Database dumps** from MariaDB/MySQL containers
+- **Stack data backup** for Docker Compose bind mounts
+- **GPG AES-256 encryption** for secrets
+- **Generational retention** (7 daily, 4 weekly, 3 monthly)
+- **Passphrase-protected SSH keys** with ssh-agent
+- **Healthchecks.io integration** for monitoring
+- **Restore support** with automatic password fallback
 
-## Supported Systems
+[📖 Full Documentation →](Backup/README.md)
 
-- Raspberry Pi 4
-- Raspberry Pi OS Lite / Raspberry Pi OS (Debian-based)
-- Headless configuration
-- Ethernet-only networking
+### 🖥️ [Pi-Headless-Cleanup](Pi-Headless-Cleanup/README.md)
 
-> Not tested on Ubuntu Server. Adjustments may be required.
+Optimize a Raspberry Pi for headless server operation:
 
----
+- Disables Bluetooth and Wi-Fi radios
+- Removes GUI packages (X11, LXDE, etc.)
+- Disables unnecessary services
+- Reduces memory usage and attack surface
 
-## What This Script Does
+[📖 Full Documentation →](Pi-Headless-Cleanup/README.md)
 
-### Services Disabled
+## Quick Start
 
-- `bluetooth.service`
-- `wpa_supplicant.service`
-- `avahi-daemon.service`
-- `triggerhappy.service`
-- `ModemManager.service`
-
-### Radios Disabled (Defense in Depth)
-
-- Firmware overlays:
-  - `dtoverlay=disable-wifi`
-  - `dtoverlay=disable-bt`
-- Persistent `rfkill` blocks for Wi-Fi and Bluetooth
-
-### Packages Removed
-
-- X11 and display server components
-- Wayland / Weston
-- Desktop environments and display managers
-- GTK, Mesa, OpenGL libraries
-- Raspberry Pi desktop software and games
-
-### System Tweaks
-
-- GPU memory reduced to 16 MB
-- Onboard audio disabled
-- Journal logs vacuumed to 7 days
-- Unused packages fully purged
-
----
-
-## Installation
-
-Clone the repository:
+### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/pi-headless-cleanup.git
-cd pi-headless-cleanup
+cd /opt
+git clone https://github.com/ian-b-stewart/Raspberry-Pi.git
+```
+
+### Setup Backup System
+
+```bash
+cd /opt/Raspberry-Pi/Backup
+./scripts/setup.sh
+# Follow the interactive prompts
+```
+
+### Run Headless Cleanup
+
+```bash
+cd /opt/Raspberry-Pi/Pi-Headless-Cleanup
+sudo ./pi-headless-cleanup.sh
+```
+
+## Security
+
+This is a **public repository**. All sensitive data is excluded via `.gitignore`:
+
+- `Backup/secrets/` - Contains SSH keys, passwords, environment files
+- `*.env` files (except `*.env.example` templates)
+- SSH private keys (`id_*`)
+- Key/certificate files (`*.key`, `*.pem`)
+
+**Never commit secrets to this repository.**
+
+## Requirements
+
+- Raspberry Pi 4 (or compatible ARM device)
+- Raspberry Pi OS Lite (Bookworm/Bullseye)
+- Bash 4.0+
+- Standard Unix tools (gpg, rsync, ssh, docker)
+
+## License
+
+MIT License - See [LICENSE](LICENSE) for details.
+
+## Author
+
+Ian Stewart - [GitHub](https://github.com/ian-b-stewart)
