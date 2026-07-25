@@ -3,12 +3,26 @@ Backup/secrets/
 
 # Environment files with real values (keep .example templates)
 *.env
+*.env.*
 !*.env.example
 
 # SSH keys
 id_*
 *.key
 *.pem
+*.ppk
+
+# Credential stores and client authentication files
+*.p12
+*.pfx
+*.jks
+*.kdbx
+.netrc
+.npmrc
+.pypirc
+credentials.json
+service-account*.json
+acme.json
 
 # GPG files
 *.gpg
@@ -24,3 +38,6 @@ id_*
 *~
 .vscode/
 *.bak
+
+# Secret scanner output
+gitleaks-report.*
