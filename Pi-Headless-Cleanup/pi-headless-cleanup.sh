@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 readonly SCRIPT_NAME="${0##*/}"
 readonly RFKILL_UNIT=/etc/systemd/system/rfkill-block.service
+readonly MODPROBE_CONFIG=/etc/modprobe.d/pi-headless-cleanup.conf
 
 APPLY=false
 ASSUME_YES=false
@@ -224,7 +225,12 @@ cp --preserve=mode,ownership,timestamps "$CONFIG" "$BACKUP_CONFIG"
 log "Disabling unnecessary services"
 for unit in "${DISABLE_SERVICES[@]}"; do
   if unit_exists "$unit"; then
-    systemctl disable --now "$unit" || die "Failed to disable $unit"
+    systemctl stop "$unit" || die "Failed to stop $unit"
+    case "$(systemctl is-enabled "$unit" 2>/dev/null || true)" in
+      enabled|enabled-runtime|linked|linked-runtime)
+        systemctl disable "$unit" || die "Failed to disable $unit"
+        ;;
+    esac
   fi
 done
 
@@ -236,19 +242,23 @@ for unit in bluetooth.service wpa_supplicant.service rpcbind.service rpcbind.soc
 done
 
 cloud_init_status=""
-if command -v cloud-init >/dev/null 2>&1; then
+if [[ -e /etc/cloud/cloud-init.disabled ]]; then
+  log "Cloud-init is already disabled"
+elif command -v cloud-init >/dev/null 2>&1; then
   cloud_init_status="$(cloud-init status --long 2>/dev/null || true)"
-fi
-if grep -q '^status: done$' <<<"$cloud_init_status"; then
-  log "Disabling cloud-init on this already-provisioned host"
-  touch /etc/cloud/cloud-init.disabled
-  for unit in "${CLOUD_INIT_SERVICES[@]}"; do
-    if unit_exists "$unit"; then
-      systemctl disable --now "$unit" 2>/dev/null || true
-    fi
-  done
+  if grep -q '^status: done$' <<<"$cloud_init_status"; then
+    log "Disabling cloud-init on this already-provisioned host"
+    touch /etc/cloud/cloud-init.disabled
+    for unit in "${CLOUD_INIT_SERVICES[@]}"; do
+      if unit_exists "$unit"; then
+        systemctl disable --now "$unit" 2>/dev/null || true
+      fi
+    done
+  else
+    log "Cloud-init is incomplete; leaving it unchanged"
+  fi
 else
-  log "Cloud-init is absent or incomplete; leaving it unchanged"
+  log "Cloud-init is absent"
 fi
 
 log "Blocking Wi-Fi and Bluetooth radios"
@@ -313,6 +323,14 @@ sed -i \
   -e '/^[[:space:]]*dtoverlay=disable-wifi[[:space:]]*$/d' \
   -e '/^[[:space:]]*dtoverlay=disable-bt[[:space:]]*$/d' \
   "$CONFIG"
+
+# Preserve HDMI video for emergency console access but disable HDMI audio.
+sed -Ei \
+  '/^[[:space:]]*dtoverlay=vc4-kms-v3d(,.*)?[[:space:]]*$/ {
+    /(^|,)noaudio(,|$)/! s/[[:space:]]*$/,noaudio/
+  }' \
+  "$CONFIG"
+
 cat >>"$CONFIG" <<'EOF'
 
 # BEGIN pi-headless-cleanup managed settings
@@ -323,6 +341,15 @@ display_auto_detect=0
 dtoverlay=disable-wifi
 dtoverlay=disable-bt
 # END pi-headless-cleanup managed settings
+EOF
+
+log "Disabling unused legacy audio and camera modules"
+cat >"$MODPROBE_CONFIG" <<'EOF'
+# Managed by pi-headless-cleanup.sh. This host has no audio or camera workload.
+blacklist snd_bcm2835
+blacklist bcm2835_v4l2
+blacklist bcm2835_codec
+blacklist bcm2835_isp
 EOF
 
 log "Verifying essential services and boot packages"
